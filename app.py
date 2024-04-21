@@ -51,7 +51,7 @@ def admin():
 
 @app.route('/cliente')
 def cliente():
-    return render_template('predict.html')
+    return render_template('cliente.html')
 
 @app.route('/upload', methods=['POST'])
 def upload():
