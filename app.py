@@ -11,11 +11,9 @@ from nltk.corpus import stopwords
 
 app = Flask(__name__)
 
-# Inicializar recursos de NLTK
 nltk.download('punkt')
 nltk.download('stopwords')
 
-# Definiciones globales de preprocesamiento
 translator = Translator()
 stemmer = SnowballStemmer('spanish')
 stop_words = set(stopwords.words('spanish'))
@@ -27,7 +25,7 @@ def translate_if_needed(text):
             return translator.translate(text, src='en', dest='es').text
         return text
     except Exception as e:
-        return text  # O maneja el error como prefieras
+        return text  
 
 def normalize_numbers(text):
     return re.sub(r'\b\d+(?:\.\d+)?\b', 'NUM', text)
@@ -40,8 +38,8 @@ def preprocessing(texts):
     processed_texts = [' '.join([stemmer.stem(word) for word in text.split()]) for text in processed_texts]
     return processed_texts
 
-# Asegúrate de que la función de preprocesamiento esté definida antes de cargar el modelo
-modelo = joblib.load('model.joblib')  # Ajusta la ruta según sea necesario
+
+modelo = joblib.load('model.joblib')  
 
 @app.route('/')
 def index():
@@ -49,7 +47,7 @@ def index():
 
 @app.route('/admin')
 def admin():
-    return render_template('retrain.html')  # Esta página contendrá el formulario de re-entrenamiento
+    return render_template('retrain.html')  
 
 @app.route('/cliente')
 def cliente():
@@ -61,10 +59,11 @@ def upload():
     if file and file.filename.endswith('.csv'):
         content = file.stream.read().decode('utf-8')
         df = pd.read_csv(StringIO(content))
-        processed_texts = preprocessing(df['Review'].tolist()) 
+        processed_texts = preprocessing(df['Review'].tolist())  
         predictions = modelo.predict(processed_texts)
-        return jsonify(predictions.tolist())
-    return 'Invalid file or file format', 400
+        results = list(zip(df['Review'].tolist(), predictions)) 
+        return render_template('result.html', results=results)
+    return 'Archivo inválido o formato de archivo incorrecto', 40
 
 @app.route('/retrain', methods=['POST'])
 def retrain():
@@ -75,7 +74,7 @@ def retrain():
         processed_texts = preprocessing(df['Review'].tolist())
         modelo = joblib.load('model.joblib')
         modelo.fit(processed_texts, df['Class'])
-        joblib.dump(modelo, 'model.joblib')  # Guarda el modelo reentrenado
+        joblib.dump(modelo, 'model.joblib')  
         return 'Model retrained successfully', 200
     return 'Invalid file or file format', 400
 

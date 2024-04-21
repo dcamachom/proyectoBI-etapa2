@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Re-entrenar Modelo - Turismo de los Alpes</title>
+    <title>Resultados de Predicción - Turismo de los Alpes</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
@@ -29,17 +29,21 @@
         .btn-info {
             background-color: #17a2b8;
         }
-    </style>
+    </style
 </head>
 <body>
-<div class="card text-center">
-    <h1>TURISMO DE LOS ALPES</h1>
-    <h2>Entrenar el modelo</h2>
-    <p class="lead">Si desea entrenar el modelo con nuevos datos, por favor suba un archivo CSV:</p>
-    <form action="/retrain" method="post" enctype="multipart/form-data" class="mt-4">
-        <input type="file" name="file" accept=".csv" class="btn btn-secondary btn-lg btn-custom">
-        <button type="submit" class="btn btn-primary btn-lg btn-custom mt-3">Entrenar Modelo</button>
-    </form>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Resultados de la Predicción</h1>
+    <div class="list-group">
+        {% for review, prediction in results %}
+            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ review }}</h5>
+                    <small class="text-muted">Calificación predicha: {{ prediction }}</small>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
 </div>
 </body>
 </html>
